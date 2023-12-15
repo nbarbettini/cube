@@ -74,7 +74,9 @@ class CubeCliEnvironment implements CubeEnvironment {
 
   public async down() {
     if (this.cli) {
-      process.kill(-this.cli.pid, 'SIGINT');
+      if (this.cli.pid) {
+        process.kill(-this.cli.pid, 'SIGINT');
+      }
       process.stdout.write('Cube Exited\n');
     }
   }
