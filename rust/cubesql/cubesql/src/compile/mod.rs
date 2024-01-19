@@ -20830,4 +20830,31 @@ limit
             .sql
             .contains("DATE("));
     }
+
+    #[tokio::test]
+    async fn test_case_mixed_values_with_null() -> Result<(), CubeError> {
+        init_logger();
+
+        insta::assert_snapshot!(
+            "test_case_mixed_values_with_null",
+            execute_query(
+                "
+                SELECT ACOS(
+                    CASE i
+                        WHEN 0 THEN NULL
+                        ELSE (i::float / 10.0)
+                    END
+                ) AS acos
+                FROM (
+                    SELECT generate_series(0, 5) AS i
+                ) AS t
+                "
+                .to_string(),
+                DatabaseProtocol::PostgreSQL
+            )
+            .await?
+        );
+
+        Ok(())
+    }
 }
